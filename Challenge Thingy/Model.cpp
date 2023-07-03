@@ -12,19 +12,19 @@ void Model::do_order()
 	{
 		b = false;
 		for (auto j = 0; j < i; j++)
-			if (!database[j].empty())
+			if (!v_l_database[j].empty())
 			{
-				new_lessons.push_front(database[j].front());
-				database[j].pop_front();
+				l_new_lessons.push_front(v_l_database[j].front());
+				v_l_database[j].pop_front();
 				b = true;
 			};
 
-		if (i < database.size())
+		if (i < v_l_database.size())
 			i++;
 	};
 
 	std::cout << "Lessons (reversed):" << std::endl;
-	for (auto& i : new_lessons)
+	for (auto& i : l_new_lessons)
 		std::cout << i <<", ";
 
 	std::cout << std::endl;
@@ -40,39 +40,39 @@ void Model::get_next()
 	case 0:
 	case 1:
 	case 2:
-		while (learning.size() < 5 && !new_lessons.empty())
+		while (l_learning.size() < 5 && !l_new_lessons.empty())
 		{
-			std::cout << "Adding new Lesson to 'Learning': " << new_lessons.back() << std::endl;
+			std::cout << "Adding new Lesson to 'Learning': " << l_new_lessons.back() << std::endl;
 
-			learning.push_front(new_lessons.back());
-			new_lessons.pop_back();
+			l_learning.push_front(l_new_lessons.back());
+			l_new_lessons.pop_back();
 		};
 
-		if (learning.empty())
+		if (l_learning.empty())
 			goto out_of_lessons;
 
 		std::cout << "Pulling 'Learning' lesson: ";
 
-		lesson_plan.push_back(learning.back());
-		learning.pop_back();
+		l_lesson_plan.push_back(l_learning.back());
+		l_learning.pop_back();
 		do_lesson();
 		return;
 
 	case 3:
-		if (strong.empty())
+		if (l_strong.empty())
 			goto out_of_lessons;
 
 		std::cout << "Pulling 'Strong' lesson: ";
 
-		lesson_plan.push_back(strong.back());
-		strong.pop_back();
+		l_lesson_plan.push_back(l_strong.back());
+		l_strong.pop_back();
 		do_lesson();
 
 		return;
 	};
 
 out_of_lessons:
-	if (learning.empty() || strong.empty())
+	if (l_learning.empty() || l_strong.empty())
 		std::cout << "No Lessons left" << std::endl;
 	else
 		get_next();
@@ -85,17 +85,17 @@ void Model::do_lesson()
 
 	// TODO: Add a filter for recently repeated lessons
 
-	std::cout << lesson_plan.back() << ": %" << r;
+	std::cout << l_lesson_plan.back() << ": %" << r;
 
 	if (r >= 60)
 	{
 		std::cout << " -> strong" << std::endl;
-		strong.push_front(lesson_plan.back());
+		l_strong.push_front(l_lesson_plan.back());
 	}
 	else
 	{
 		std::cout << " -> learning" << std::endl;
-		learning.push_front(lesson_plan.back());
+		l_learning.push_front(l_lesson_plan.back());
 	};
 };
 
@@ -108,12 +108,12 @@ void Model::generate(int amount)
 		get_next();
 
 	std::cout << "Learning: ";
-	for (auto& i : learning)
+	for (auto& i : l_learning)
 		std::cout << i << ", ";
 	std::cout << std::endl;
 
 	std::cout << "Strong: ";
-	for (auto& i : strong)
+	for (auto& i : l_strong)
 		std::cout << i << ", ";
 	std::cout << std::endl;
 };
