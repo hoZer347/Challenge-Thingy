@@ -33,8 +33,7 @@ class Model final
 
 	// Simulates the execution of a lesson, assigning a random grade and putting it into the correct category
 	void do_lesson();
-
-
+	
 	// New
 	std::list<std::string> l_new_lessons;	// Lessons have not been introduced yet
 
@@ -45,6 +44,8 @@ class Model final
 
 	// Result
 	std::list<std::string> l_lesson_plan;	// The final lesson plan the student should use for studying
+
+	uint8_t ui8_mode = 0;					// Tell the system what class it is adding next
 
 public:
 

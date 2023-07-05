@@ -35,6 +35,8 @@ void Model::get_next()
 {
 	static uint64_t counter;
 
+	auto it = l_lesson_plan.end();
+
 	switch (counter++ % 4)
 	{
 	case 0:
@@ -51,7 +53,18 @@ void Model::get_next()
 		if (l_learning.empty())
 			goto out_of_lessons;
 
-		std::cout << "Pulling 'Learning' lesson: ";
+		std::cout << "Pulling 'Learning' lesson: " << l_learning.back();
+
+		it = l_lesson_plan.end();
+		if ((l_lesson_plan.size() > 0 && l_learning.back() == *(--it)) ||
+			(l_lesson_plan.size() > 1 && l_learning.back() == *(--it)) ||
+			(l_lesson_plan.size() > 2 && l_learning.back() == *(--it)))
+		{
+			std::cout << " Cancelled, too recent" << std::endl;
+			l_learning.pop_back();
+			get_next();
+			return;
+		};
 
 		l_lesson_plan.push_back(l_learning.back());
 		l_learning.pop_back();
@@ -62,8 +75,21 @@ void Model::get_next()
 		if (l_strong.empty())
 			goto out_of_lessons;
 
-		std::cout << "Pulling 'Strong' lesson: ";
-
+		std::cout << "Pulling 'Strong' lesson: " << l_strong.back();
+		
+		it = l_lesson_plan.end();
+		if ((l_lesson_plan.size() > 0 && l_strong.back() == *(--it)) ||
+			(l_lesson_plan.size() > 1 && l_strong.back() == *(--it)) ||
+			(l_lesson_plan.size() > 2 && l_strong.back() == *(--it)) ||
+			(l_lesson_plan.size() > 3 && l_strong.back() == *(--it)) ||
+			(l_lesson_plan.size() > 4 && l_strong.back() == *(--it)))
+		{
+			std::cout << " Cancelled, too recent" << std::endl;
+			l_strong.pop_back();
+			get_next();
+			return;
+		};
+		
 		l_lesson_plan.push_back(l_strong.back());
 		l_strong.pop_back();
 		do_lesson();
@@ -72,7 +98,7 @@ void Model::get_next()
 	};
 
 out_of_lessons:
-	if (l_learning.empty() || l_strong.empty())
+	if (l_learning.empty() && l_strong.empty())
 		std::cout << "No Lessons left" << std::endl;
 	else
 		get_next();
@@ -85,7 +111,7 @@ void Model::do_lesson()
 
 	// TODO: Add a filter for recently repeated lessons
 
-	std::cout << l_lesson_plan.back() << ": %" << r;
+	std::cout << ": %" << r;
 
 	if (r >= 60)
 	{
